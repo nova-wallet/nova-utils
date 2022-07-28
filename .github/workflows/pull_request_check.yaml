@@ -74,6 +74,9 @@ jobs:
         id: message
         run: |
           output=$(python nova-utils/compare_xcm_json.py)
+          output="${output//'%'/'%25'}"
+          output="${output//$'\n'/'%0A'}"
+          output="${output//$'\r'/'%0D'}"
           echo "::set-output name=message::$output"
 
       - name: Comment PR
