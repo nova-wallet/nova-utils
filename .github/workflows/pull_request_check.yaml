@@ -77,7 +77,7 @@ jobs:
         id: message
         uses: juliangruber/read-file-action@v1
         with:
-          path: ./differences.txt
+          path: ./differences.md
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v1
