@@ -73,7 +73,7 @@ jobs:
       - name: Build comment message
         id: message
         run: |
-          echo "CHANGED_MESSAGE=$(python nova-utils/compare_xcm_json.py)" >> "$GITHUB_ENV"
+          echo "CHANGED_MESSAGE='$(python nova-utils/compare_xcm_json.py)'" >> "$GITHUB_ENV"
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v1
