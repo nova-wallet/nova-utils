@@ -70,14 +70,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build comment message
+      - name: Generate message
+        run: python nova-utils/compare_xcm_json.py
+
+      - name: Read result from file
         id: message
-        run: |
-          output=$(python nova-utils/compare_xcm_json.py)
-          output="${output//'%'/'%25'}"
-          output="${output//$'\n'/'%0A'}"
-          output="${output//$'\r'/'%0D'}"
-          echo "::set-output name=message::$output"
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./differences.txt
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v1
