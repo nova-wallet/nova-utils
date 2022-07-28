@@ -70,10 +70,10 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build comment message
-        id: message
-        run: |
-          echo "::set-output name=CHANGED_MESSAGE::$(python nova-utils/compare_xcm_json.py)"
+      # - name: Build comment message
+      #   id: message
+      #   run: |
+      #     echo "::set-output name=CHANGED_MESSAGE::$(python nova-utils/compare_xcm_json.py)"
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v1
