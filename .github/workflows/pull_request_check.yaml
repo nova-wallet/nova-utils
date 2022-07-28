@@ -79,5 +79,5 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            ${{ steps.message.outputs.CHANGED_MESSAGE }} :wave:
+            echo "$(python nova-utils/compare_xcm_json.py)" :wave:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
