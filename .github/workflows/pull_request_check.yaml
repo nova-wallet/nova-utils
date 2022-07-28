@@ -70,14 +70,14 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Build comment message
-        id: message
-        run: |
-          echo "CHANGED_MESSAGE='$(python nova-utils/compare_xcm_json.py)'" >> "$GITHUB_ENV"
+      # - name: Build comment message
+      #   id: message
+      #   run: |
+      #     echo "CHANGED_MESSAGE='$(python nova-utils/compare_xcm_json.py)'" >> "$GITHUB_ENV"
 
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            ${{ steps.message.outputs.CHANGED_MESSAGE }} :wave:
+            $(python nova-utils/compare_xcm_json.py) :wave:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
