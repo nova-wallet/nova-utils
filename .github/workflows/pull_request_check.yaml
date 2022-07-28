@@ -3,9 +3,6 @@ name: Check pull requests
 on:
   pull_request:
 
-env:
-  PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
-
 jobs:
   linter-check:
     runs-on: ubuntu-latest
@@ -66,7 +63,7 @@ jobs:
       - name: Checkout script
         uses: actions/checkout@v3
         with:
-          token: ${{ env.PAT_TOKEN }}
+          token: ${{ secrets.PAT_TOKEN }}
           repository: nova-wallet/support-utils
           ref: 'main'
 
