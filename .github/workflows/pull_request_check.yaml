@@ -83,5 +83,5 @@ jobs:
         uses: thollander/actions-comment-pull-request@v1
         with:
           message: |
-            ${{ steps.message.outputs.content }} :wave:
+            ${{ steps.message.outputs.content }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
