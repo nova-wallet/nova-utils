@@ -1,0 +1,87 @@
+name: Check pull requests
+
+on:
+  pull_request:
+
+jobs:
+  linter-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: json-syntax-check
+        uses: limitusus/json-syntax-check@v1
+        with:
+          pattern: "\\.json$"
+
+
+  check-changed-files:
+    needs: linter-check
+    runs-on: ubuntu-latest
+    outputs:
+      xcm: ${{ steps.xcm.outputs.any_changed }}
+    steps:
+      - name: Checkout current repository to Master branch
+        uses: actions/checkout@v1
+
+      - name: Setup version to variables
+        run: |
+          echo "CHAINS_VERSION=$(bash .github/get_actual_json_path.sh chains)" >> "$GITHUB_ENV"
+          echo "XCM_VERSION=$(bash .github/get_actual_json_path.sh xcm)" >> "$GITHUB_ENV"
+
+      - name: Setup json paths
+        run: |
+          echo "DEV_XCM_JSON_PATH=xcm/${{ env.XCM_VERSION }}/transfers_dev.json" >> "$GITHUB_ENV"
+          echo "XCM_JSON_PATH=xcm/${{ env.XCM_VERSION }}/transfers.json" >> "$GITHUB_ENV"
+
+      - name: Was xcm file changed?
+        id: xcm
+        uses: tj-actions/changed-files@v18.2
+        with:
+          files: |
+            ${{ env.DEV_XCM_JSON_PATH }}
+            ${{ env.XCM_JSON_PATH }}
+
+
+  create-comment-with-changes:
+    runs-on: ubuntu-latest
+    if: always() && (needs.check-changed-files.outputs.xcm == 'true')
+    needs: check-changed-files
+    name: Create a comment with xcm changed data
+
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Get variables
+        run: |
+          echo ${{ github.repository }}
+          echo ${GITHUB_REF#refs/heads/}
+          echo $(git rev-parse --abbrev-ref HEAD)
+          echo $(git rev-parse --show-toplevel)
+
+      - name: Checkout script
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.PAT_TOKEN }}
+          repository: nova-wallet/support-utils
+          ref: 'main'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Generate message
+        run: python nova-utils/compare_xcm_json.py
+
+      - name: Read result from file
+        id: message
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./differences.md
+
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@v1
+        with:
+          message: |
+            ${{ steps.message.outputs.content }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
